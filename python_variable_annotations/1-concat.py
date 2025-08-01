@@ -1,3 +1,7 @@
 #!/usr/bin/env python3
-def concat(a: float, b: float) -> float:
-    return a + b
+"""Module qui contient une fonction de concatenation avec type."""
+
+
+def concat(str1: str, str2: str) -> str:
+    """concatenation de string."""
+    return str1 + str2
