@@ -1,0 +1,4 @@
+// 3-all
+// Script pour lister tous les documents de la collection school
+
+db.school.find()

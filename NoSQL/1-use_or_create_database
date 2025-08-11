@@ -1,0 +1,4 @@
+// 1-use_or_create_database
+// Script pour créer ou utiliser la database my_db
+
+use my_db
