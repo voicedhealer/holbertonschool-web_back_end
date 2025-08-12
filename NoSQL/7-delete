@@ -1,0 +1,4 @@
+// 7-delete
+// Script pour supprimer tous les documents avec name="Holberton school"
+
+db.school.deleteMany({name: "Holberton school"})
