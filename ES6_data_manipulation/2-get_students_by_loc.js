@@ -1,6 +1,5 @@
-export default function getStudentSum(list) {
-  if (!Array.isArray(list)) {
-    return 0;
-  }
-  return list.reduce((sum, student) => sum + student.id, 0);
+export default function getStudentsByLocation(list, city) {
+  return Array.isArray(list)
+    ? list.filter((student) => student.location === city)
+    : [];
 }
