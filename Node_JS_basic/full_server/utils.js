@@ -10,7 +10,7 @@ function readDatabase(filePath) {
       const lines = data
         .trim()
         .split('\n')
-        .filter((line) => line.trim() !== ''); // removes empty lines
+        .filter((line) => line.trim() !== '');
 
       const header = lines.shift().split(',');
       const firstnameIndex = header.indexOf('firstname');
