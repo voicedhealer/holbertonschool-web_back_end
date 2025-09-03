@@ -1,69 +1,60 @@
-// 7-http_express.js
 const express = require('express');
 const fs = require('fs');
+const countStudents = require('./3-read_file_async');
 
+const database = process.argv[2];
 const app = express();
 
-// Fonction pour compter les étudiants (version adaptée pour Express)
-function countStudents(path) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', (err, data) => {
-      if (err) {
-        reject(new Error('Cannot load the database'));
-        return;
-      }
-      
-      try {
-        const lines = data.split('\n').filter(line => line.trim() !== '');
-        const students = lines.slice(1);
-        
-        let result = `Number of students: ${students.length}\n`;
-        
-        const fields = {};
-        students.forEach(student => {
-          const [firstname, lastname, age, field] = student.split(',');
-          if (field) {
-            if (!fields[field]) {
-              fields[field] = [];
-            }
-            fields[field].push(firstname);
-          }
-        });
-        
-        Object.keys(fields).forEach(field => {
-          const list = fields[field];
-          result += `Number of students in ${field}: ${list.length}. List: ${list.join(', ')}\n`;
-        });
-        
-        resolve(result.trim());
-      } catch (parseError) {
-        reject(new Error('Cannot load the database'));
-      }
-    });
-  });
-}
-
-// Route principale
 app.get('/', (req, res) => {
-  res.send('Hello Holberton School!');
+  res.type('text/plain');
+  res.status(200).send('Hello Holberton School!');
 });
 
-// Route des étudiants
-app.get('/students', async (req, res) => {
-  const databasePath = process.argv[2];
-  
-  try {
-    const studentsInfo = await countStudents(databasePath);
-    res.send(`This is the list of our students\n${studentsInfo}`);
-  } catch (error) {
-    res.send(`This is the list of our students\n${error.message}`);
-  }
+app.get('/students', (req, res) => {
+  res.type('text/plain');
+  res.write('This is the list of our students\n');
+
+  countStudents(database)
+    .then(() => {
+      fs.readFile(database, 'utf-8', (err, data) => {
+        if (err) {
+          res.end('Cannot load the database');
+          return;
+        }
+
+        const lines = data.split('\n').filter((line) => line.trim() !== '');
+        if (lines.length <= 1) {
+          res.end('Number of students: 0');
+          return;
+        }
+
+        const students = lines.slice(1);
+        const fields = {};
+        let total = 0;
+
+        for (const line of students) {
+          const parts = line.split(',');
+          if (parts.length >= 4) {
+            const firstname = parts[0].trim();
+            const field = parts[3].trim();
+            if (!fields[field]) fields[field] = [];
+            fields[field].push(firstname);
+            total += 1;
+          }
+        }
+
+        res.write(`Number of students: ${total}\n`);
+        for (const [field, names] of Object.entries(fields)) {
+          res.write(`Number of students in ${field}: ${names.length}. List: ${names.join(', ')}\n`);
+        }
+        res.end();
+      });
+    })
+    .catch(() => {
+      res.end('Cannot load the database');
+    });
 });
 
-// Démarrer le serveur
-const PORT = 1245;
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+app.listen(1245);
 
 module.exports = app;
