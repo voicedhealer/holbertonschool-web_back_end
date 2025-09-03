@@ -7,23 +7,31 @@ const readDatabase = (filePath) => {
         reject(new Error('Cannot load the database'));
         return;
       }
-      
+
       try {
-        const lines = data.split('\n').filter(line => line.trim() !== '');
-        const students = lines.slice(1);
-        
-        const fields = {};
-        students.forEach(student => {
-          const [firstname, lastname, age, field] = student.split(',');
-          if (field) {
-            if (!fields[field]) {
-              fields[field] = [];
+        const lines = data
+          .trim()
+          .split('\n')
+          .filter((line) => line.trim() !== '');
+
+        const header = lines.shift().split(',');
+        const firstnameIndex = header.indexOf('firstname');
+        const fieldIndex = header.indexOf('field');
+        const studentsByField = {};
+
+        lines.forEach((line) => {
+          const parts = line.split(',');
+          const firstname = parts[firstnameIndex];
+          const field = parts[fieldIndex];
+          if (firstname && field) {
+            if (!studentsByField[field]) {
+              studentsByField[field] = [];
             }
-            fields[field].push(firstname);
+            studentsByField[field].push(firstname);
           }
         });
-        
-        resolve(fields);
+
+        resolve(studentsByField);
       } catch (parseError) {
         reject(new Error('Cannot load the database'));
       }

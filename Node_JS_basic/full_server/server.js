@@ -1,8 +1,15 @@
-const express = require('express');
-const routes = require('./routes/index.js');
+import express from 'express';
+import routes from './routes/index.js';
 
 const app = express();
-app.use('/', routes);
-app.listen(1245);
+const PORT = 1245;
 
-module.exports = app;
+// Utiliser les routes
+app.use('/', routes);
+
+// Démarrer le serveur
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+export default app;
