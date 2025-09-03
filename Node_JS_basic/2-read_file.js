@@ -4,13 +4,6 @@
  */
 const fs = require('fs');
 
-/**
- * Fonction pour compter et afficher les étudiants par domaine d'étude
- * à partir d'un fichier CSV
- * 
- * @param {string} path - Chemin vers le fichier CSV contenant les données des étudiants
- * @throws {Error} Lance une erreur si le fichier ne peut pas être lu
- */
 function countStudents(path) {
   let file;
   
