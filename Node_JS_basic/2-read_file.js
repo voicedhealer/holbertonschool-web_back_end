@@ -1,9 +1,9 @@
-import { readFileSync } from 'fs';
+const fs = require('fs');
 
 function countStudents(path) {
   let file;
   try {
-    file = readFileSync(path, 'utf-8');
+    file = fs.readFileSync(path, 'utf-8');
   } catch (err) {
     throw new Error('Cannot load the database');
   }
