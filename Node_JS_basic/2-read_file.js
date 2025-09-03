@@ -1,40 +1,38 @@
-// 2-read_file.js
 const fs = require('fs');
 
 function countStudents(path) {
+  let file;
   try {
-    // Lire le fichier de façon synchrone
-    const data = fs.readFileSync(path, 'utf8');
-    
-    // Diviser les lignes et enlever les lignes vides
-    const lines = data.split('\n').filter(line => line.trim() !== '');
-    
-    // Enlever la première ligne (header)
-    const students = lines.slice(1);
-    
-    console.log(`Number of students: ${students.length}`);
-    
-    // Grouper par domaine d'étude
-    const fields = {};
-    
-    students.forEach(student => {
-      const [firstname, lastname, age, field] = student.split(',');
-      if (field) {
-        if (!fields[field]) {
-          fields[field] = [];
-        }
-        fields[field].push(firstname);
-      }
-    });
-    
-    // Afficher les statistiques par domaine
-    Object.keys(fields).forEach(field => {
-      const list = fields[field];
-      console.log(`Number of students in ${field}: ${list.length}. List: ${list.join(', ')}`);
-    });
-    
-  } catch (error) {
+    file = fs.readFileSync(path, 'utf-8');
+  } catch (err) {
     throw new Error('Cannot load the database');
+  }
+
+  const lines = file.trim().split('\n');
+  const students = lines.slice(1).filter((line) => line.trim() !== '');
+
+  console.log(`Number of students: ${students.length}`);
+
+  const groups = {};
+
+  for (const line of students) {
+    const parts = line.split(',');
+    const firstname = parts[0];
+    const field = parts[3];
+
+    if (!groups[field]) {
+      groups[field] = [];
+    }
+    groups[field].push(firstname);
+  }
+
+  for (const field in groups) {
+    if (Object.prototype.hasOwnProperty.call(groups, field)) {
+      const list = groups[field].join(', ');
+      console.log(
+        `Number of students in ${field}: ${groups[field].length}. List: ${list}`,
+      );
+    }
   }
 }
 
